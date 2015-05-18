@@ -1,3 +1,7 @@
+
+# instructions ------------------------------------------------------------
+
+
 #The purpose of this project is to demonstrate your ability to collect, work
 #with, and clean a data set. The goal is to prepare tidy data that can be used
 #for later analysis. You will be graded by your peers on a series of yes/no
@@ -74,7 +78,8 @@ actlab=read.table("UCI HAR Dataset/activity_labels.txt")
 
 #1 join test and train
 datarun=rbind(test,train)
-
+##cleanup
+rm(xtest,xtrain,ytest,ytrain,test,train)
 # answer 2 ----------------------------------------------------------------
 
 #2 subset measurement and SD
@@ -89,7 +94,7 @@ datarun=cbind(select(datarun, matches("activity")),
 # answer 3 ----------------------------------------------------------------
 
 #3 rename activities
-##take names from actlab and reintroduce to data
+##take names from activity labels and reintroduce to data
 for(i in 1:6 ){
        datarun[,1]=sub(i,actlab[i,2],datarun[,1])
 }
@@ -97,7 +102,27 @@ for(i in 1:6 ){
 # answer 4 ----------------------------------------------------------------
 
 #4 rename variables
-##make it simple
+##make it simple yet readable
 colnames(datarun)=gsub("\\.","",colnames(datarun))
 colnames(datarun)=tolower(colnames(datarun))
-colnames(datarun)=tolower(colnames(datarun))
+colnames(datarun)=sub("^[t]","time_of_",colnames(datarun))
+colnames(datarun)=sub("^[f]","frequency_",colnames(datarun))
+colnames(datarun)=sub("acc","accelerometer_",colnames(datarun))
+colnames(datarun)=sub("gyro","gyroscope_",colnames(datarun))
+colnames(datarun)=gsub("body","body_",colnames(datarun))
+colnames(datarun)=sub("gravity","gravity_",colnames(datarun))
+colnames(datarun)=sub("mean","mean_",colnames(datarun))
+colnames(datarun)=sub("std","standard_deviation_",colnames(datarun))
+colnames(datarun)=sub("jerk","jerk_",colnames(datarun))
+colnames(datarun)=sub("mag","magnitude_",colnames(datarun))
+
+
+
+#5 Data Average
+dataavg=data.frame()
+for(i in 2:ncol(datarun)){
+       dataavg=c(dataavg,mean(datarun[,i]))
+}
+dataavg=as.data.frame(dataavg)
+colnames(dataavg)=colnames(datarun)[2:ncol(datarun)]
+write.table(dataavg,"data.txt",row.name=F) 
