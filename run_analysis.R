@@ -39,6 +39,7 @@
 
 # start code -------------------------------------------------------------------
 library(dplyr)
+library(reshape2)
 # get file ----------------------------------------------------------------
 
 #download file
@@ -115,14 +116,11 @@ colnames(datarun)=sub("mean","mean_",colnames(datarun))
 colnames(datarun)=sub("std","standard_deviation_",colnames(datarun))
 colnames(datarun)=sub("jerk","jerk_",colnames(datarun))
 colnames(datarun)=sub("mag","magnitude_",colnames(datarun))
+colnames(datarun)=sub("angle","angle_",colnames(datarun))
 
 
 
 #5 Data Average
-dataavg=data.frame()
-for(i in 2:ncol(datarun)){
-       dataavg=c(dataavg,mean(datarun[,i]))
-}
-dataavg=as.data.frame(dataavg)
-colnames(dataavg)=colnames(datarun)[2:ncol(datarun)]
+dataavg=aggregate(datarun[2:ncol(datarun)],list(datarun$activity),mean)
+colnames(dataavg)[1]="activity"
 write.table(dataavg,"data.txt",row.name=F) 
